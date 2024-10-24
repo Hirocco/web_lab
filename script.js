@@ -1,48 +1,72 @@
-//zad 1
-const button1 = document.getElementById("ex1_button");
+const example = document.getElementById("example");
+const cw1 = document.getElementById("cw1");
+const cw2 = document.getElementById("cw2");
+const cw3 = document.getElementById("cw3");
+const answer = document.getElementById("answer");
 
-button1.addEventListener("click", function () {
-  document.getElementById("ex1_content").innerHTML = "1,2,3,4,5,6,7,8,9";
+example.addEventListener("click", function () {
+  fetch("https://jsonplaceholder.typicode.com/posts")
+    .then((response) => response.json())
+    .then((array) => {
+      console.log(array);
+      answer.innerHTML = JSON.stringify(array);
+    });
 });
 
-//zad 2
-document.getElementById("ex2_text").addEventListener("input", function () {
-  const inputText = this.value;
-  const outputInfo = document.getElementById("ex2_content");
-
-  // Sprawdzanie długości
-  if (inputText.length !== 9) {
-    outputInfo.innerHTML = "Długość numeru musi być równa 9";
-    return;
-  }
-
-  // Sprawdzanie liter
-  else if (/[a-zA-Z]/.test(inputText)) {
-    outputInfo.innerHTML = "Numer nie może zawierać liter";
-    return;
-  }
-
-  // Sprawdzanie znaków specjalnych
-  else if (/[^0-9]/.test(inputText)) {
-    outputInfo.innerHTML = "Numer nie może zawierać znaków specjalnych";
-    return;
-  }
-
-  // Jeśli wszystko jest w porządku
-  outputInfo.innerHTML = "Numer telefonu jest poprawny";
+cw1.addEventListener("click", function () {
+  fetch("https://jsonplaceholder.typicode.com/posts")
+    .then((res) => res.json())
+    .then((array) => {
+      answer.innerHTML = "";
+      for (let i = 0; i < array.length; i++) {
+        answer.innerHTML += `
+            UserID: ${array[i].userId}<br>
+            ID: ${array[i].id}<br>
+            Title: ${array[i].title}<br>
+            Body:  ${array[i].body}<br>
+            `;
+      }
+    });
+  answer.innerHTML = "Loading...";
 });
 
-//zad 3
-function allowDrop(ev) {
-  ev.preventDefault();
-}
+cw2.addEventListener("click", function () {
+  fetch("https://jsonplaceholder.typicode.com/posts/1")
+    .then((res) => res.json())
+    .then((data) => {
+      answer.innerHTML = `
+          UserID: ${data.userId}<br>
+          ID: ${data.id}<br>
+          Title: ${data.title}<br>
+          Body:  ${data.body}<br>
+        `;
+    });
+  answer.innerHTML = "Loading...";
+});
 
-function drag(ev) {
-  ev.dataTransfer.setData("text", ev.target.id);
-}
+cw3.addEventListener("click", function () {
+  answer.innerHTML = "Processing...";
 
-function drop(ev) {
-  ev.preventDefault();
-  var data = ev.dataTransfer.getData("text");
-  ev.target.appendChild(document.getElementById(data));
-}
+  // Wysłanie POST
+  fetch("https://jsonplaceholder.typicode.com/posts", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+    body: JSON.stringify({
+      title: "foo", // Przykładowe dane nowego posta
+      body: "bar",
+      userId: 1,
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      // Po pomyślnym dodaniu posta, wyświetl ID nowego posta
+      answer.innerHTML = `Dodano nowy post o ID = ${data.id}`;
+    })
+    .catch((error) => {
+      // Obsługa błędów
+      answer.innerHTML = "Wystąpił błąd podczas dodawania posta.";
+      console.error("Błąd:", error);
+    });
+});
