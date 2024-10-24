@@ -34,6 +34,7 @@ cw2.addEventListener("click", function () {
   fetch("https://jsonplaceholder.typicode.com/posts/1")
     .then((res) => res.json())
     .then((data) => {
+      console.log(answer);
       answer.innerHTML = `
           UserID: ${data.userId}<br>
           ID: ${data.id}<br>
@@ -41,7 +42,7 @@ cw2.addEventListener("click", function () {
           Body:  ${data.body}<br>
         `;
     });
-  answer.innerHTML = "Loading...";
+  alert("loading");
 });
 
 cw3.addEventListener("click", function () {
@@ -61,11 +62,9 @@ cw3.addEventListener("click", function () {
   })
     .then((response) => response.json())
     .then((data) => {
-      // Po pomyślnym dodaniu posta, wyświetl ID nowego posta
       answer.innerHTML = `Dodano nowy post o ID = ${data.id}`;
     })
     .catch((error) => {
-      // Obsługa błędów
       answer.innerHTML = "Wystąpił błąd podczas dodawania posta.";
       console.error("Błąd:", error);
     });
