@@ -1,41 +1,29 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="stylesheet" href="style.css" />
-    <title>repl.it</title>
-  </head>
-  <body>
-    <div>
-      <div id="ex1" class="ex">
-        <h5>Ex1 - OnClick</h5>
-        <button id="ex1_button">Click me</button>
-        <div id="ex1_content"></div>
-      </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOAA API Fetcher</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-      <div id="ex2" class="ex">
-        <h5>Ex2 - Validation</h5>
-        <input type="text" id="ex2_text" placeholder="phone number" />
-        <div id="ex2_content"></div>
-      </div>
+  <h1>NOAA API Data Fetcher</h1>
 
-      <div id="ex3" class="ex">
-        <h5>Ex3 - Drag&Drop</h5>
-        <div>
-          <div id="ex3_one" ondrop="drop(event)" ondragover="allowDrop(event)">
-            <div id="ex3_element" draggable="true" ondragstart="drag(event)">
-              Content
-            </div>
-          </div>
-          <div
-            id="ex3_two"
-            ondrop="drop(event)"
-            ondragover="allowDrop(event)"
-          ></div>
-        </div>
-      </div>
-    </div>
-    <script src="script.js"></script>
-  </body>
+  <div class="input-container">
+    <input type="text" id="endpointInput" placeholder="Enter endpoint (e.g., /stations)" />
+    <button id="fetch-btn">Fetch Data</button>
+  </div>
+
+  <div class="table-container">
+    <table id="dataTable">
+      <thead>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </html>

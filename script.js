@@ -1,48 +1,71 @@
-//zad 1
-const button1 = document.getElementById("ex1_button");
+const apiToken = "bUPsQIskjeJxJEUkCJcXpBwEBhmRTFHa";
+const baseUrl = "https://www.ncei.noaa.gov/cdo-web/api/v2/";
+const fetchBtn = document.getElementById('fetch-btn');
 
-button1.addEventListener("click", function () {
-  document.getElementById("ex1_content").innerHTML = "1,2,3,4,5,6,7,8,9";
+async function fetchData() {
+  const endpoint = document.getElementById("endpointInput").value.trim();
+  
+  if (endpoint === "") {
+    alert("Please enter an endpoint.");
+    return;
+  }
+  
+  const url = `${baseUrl}${endpoint}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        token: apiToken
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Error fetching data: ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    displayData(data.results || data);
+  } catch (error) {
+    console.error('Error fetching data', error);
+    alert(error.message);
+  }
+}
+
+function displayData(data) {
+  const tableHead = document.querySelector("#dataTable thead");
+  const tableBody = document.querySelector("#dataTable tbody");
+  
+  tableHead.innerHTML = "";
+  tableBody.innerHTML = "";
+  
+  if (data.length === 0) {
+    alert("No data available for this endpoint.");
+    return;
+  }
+
+  const headers = Object.keys(data[0]);
+  const headerRow = document.createElement("tr");
+  headers.forEach(header => {
+    const th = document.createElement("th");
+    th.textContent = header;
+    headerRow.appendChild(th);
+  });
+  tableHead.appendChild(headerRow);
+
+  data.forEach(item => {
+    const row = document.createElement("tr");
+    headers.forEach(header => {
+      const cell = document.createElement("td");
+      cell.textContent = item[header] !== undefined ? item[header] : "N/A";
+      row.appendChild(cell);
+    });
+    tableBody.appendChild(row);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("endpointInput").value = "stations";
 });
 
-//zad 2
-document.getElementById("ex2_text").addEventListener("input", function () {
-  const inputText = this.value;
-  const outputInfo = document.getElementById("ex2_content");
-
-  // Sprawdzanie długości
-  if (inputText.length !== 9) {
-    outputInfo.innerHTML = "Długość numeru musi być równa 9";
-    return;
-  }
-
-  // Sprawdzanie liter
-  else if (/[a-zA-Z]/.test(inputText)) {
-    outputInfo.innerHTML = "Numer nie może zawierać liter";
-    return;
-  }
-
-  // Sprawdzanie znaków specjalnych
-  else if (/[^0-9]/.test(inputText)) {
-    outputInfo.innerHTML = "Numer nie może zawierać znaków specjalnych";
-    return;
-  }
-
-  // Jeśli wszystko jest w porządku
-  outputInfo.innerHTML = "Numer telefonu jest poprawny";
-});
-
-//zad 3
-function allowDrop(ev) {
-  ev.preventDefault();
-}
-
-function drag(ev) {
-  ev.dataTransfer.setData("text", ev.target.id);
-}
-
-function drop(ev) {
-  ev.preventDefault();
-  var data = ev.dataTransfer.getData("text");
-  ev.target.appendChild(document.getElementById(data));
-}
+fetchBtn.addEventListener('click', fetchData);
