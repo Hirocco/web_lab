@@ -1,37 +1,53 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Kraje
-  fetch("https://restcountries.com/v3.1/all?fields=name")
-    .then((response) => response.json())
-    .then((data) => {
-      const table = document.getElementById("countries");
+const searchBtn = document.getElementById('search-btn');
 
-      data.forEach((country) => {
-        // Extract relevant country details
-        const name = country.name.common;
-        const official = country.name.official;
-        const native = country.name.nativeName
-          ? Object.values(country.name.nativeName)[0].official
-          : "N/A";
-
-        // Create a new row for each country
-        const row = document.createElement("tr");
-
-        // Create and append cells for each country detail
-        const nameCell = document.createElement("td");
-        nameCell.textContent = name;
-        row.appendChild(nameCell);
-
-        const officialCell = document.createElement("td");
-        officialCell.textContent = official;
-        row.appendChild(officialCell);
-
-        const nativeCell = document.createElement("td");
-        nativeCell.textContent = native;
-        row.appendChild(nativeCell);
-
-        // Append the row to the table
-        table.appendChild(row);
+function searchCountry() {
+    const capital = document.getElementById("capitalInput").value.trim();
+    
+    if (capital === "") {
+      alert("Please enter a capital name.");
+      return;
+    }
+    
+    const url = `https://restcountries.com/v3.1/capital/${capital}`;
+    
+    fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error("No country found with this capital.");
+        }
+        return response.json();
+      })
+      .then(data => {
+        displayCountryData(data);
+      })
+      .catch(error => {
+        alert(error.message);
+        clearTable();
       });
-    })
-    .catch((error) => console.error("Error fetching data:", error));
-});
+  }
+  
+  function displayCountryData(countries) {
+    const tableBody = document.querySelector("#countryTable tbody");
+    clearTable();
+    
+    countries.forEach(country => {
+      const row = document.createElement("tr");
+      
+      row.innerHTML = `
+        <td>${country.name.common}</td>
+        <td>${country.capital ? country.capital[0] : "N/A"}</td>
+        <td>${country.population.toLocaleString()}</td>
+        <td>${country.region}</td>
+        <td>${country.subregion || "N/A"}</td>
+      `;
+      
+      tableBody.appendChild(row);
+    });
+  }
+
+  function clearTable() {
+    const tableBody = document.querySelector("#countryTable tbody");
+    tableBody.innerHTML = "";
+  }
+  
+  searchBtn.addEventListener('click', searchCountry);
